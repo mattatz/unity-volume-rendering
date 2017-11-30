@@ -4,10 +4,10 @@
 	{
 		_Color ("Color", Color) = (1, 1, 1, 1)
 		_Volume ("Volume", 3D) = "" {}
-		_Intensity("Intensity", Range(1.0, 5.0)) = 1.2
-		_Threshold("Threshold", Range(0.0, 1.0)) = 0.95
-		_SliceMin("Slice min", Vector) = (0.0, 0.0, 0.0, -1.0)
-		_SliceMax("Slice max", Vector) = (1.0, 1.0, 1.0, -1.0)
+		_Intensity ("Intensity", Range(1.0, 5.0)) = 1.2
+		_Threshold ("Threshold", Range(0.0, 1.0)) = 0.95
+		_SliceMin ("Slice min", Vector) = (0.0, 0.0, 0.0, -1.0)
+		_SliceMax ("Slice max", Vector) = (1.0, 1.0, 1.0, -1.0)
 	}
 
 	CGINCLUDE
@@ -125,21 +125,17 @@
 
 				// float3 start = ray.origin + ray.dir * tnear;
 				float3 start = ray.origin;
-				float3 end = ray.origin + ray.dir * tfar;
-				// float dist = distance(start, end);
-				float dist = abs(tfar - tnear);
+				float3 end = ray.origin + ray.dir * tfar; 
+				float dist = abs(tfar - tnear); // float dist = distance(start, end);
 				float step_size = dist / float(COUNT);
 				float3 ds = normalize(end - start) * step_size;
 
-				float t = 0.0;
 				float4 dst = float4(0, 0, 0, 0);
-
-				float3 uv = get_uv(ray.origin);
-				float3 p = ray.origin;
+				float3 p = start;
 
 				[unroll]
 				for (int iter = 0; iter < COUNT; iter++) {
-					uv = get_uv(p);
+					float3 uv = get_uv(p);
 					float v = sample_volume(uv);
 					float4 src = float4(v, v, v, v);
 					src.a *= 0.5;
