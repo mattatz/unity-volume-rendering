@@ -17,13 +17,37 @@
 	half _Intensity, _Threshold;
 	half3 _SliceMin, _SliceMax;
 
+	struct Ray {
+		float3 origin;
+		float3 dir;
+	};
+
+	struct AABB {
+		float3 min;
+		float3 max;
+	};
+
+	bool intersect(Ray r, AABB aabb, out float t0, out float t1)
+	{
+		float3 invR = 1.0 / r.dir;
+		float3 tbot = invR * (aabb.min - r.origin);
+		float3 ttop = invR * (aabb.max - r.origin);
+		float3 tmin = min(ttop, tbot);
+		float3 tmax = max(ttop, tbot);
+		float2 t = max(tmin.xx, tmin.yz);
+		t0 = max(t.x, t.y);
+		t = min(tmax.xx, tmax.yz);
+		t1 = min(t.x, t.y);
+		return t0 <= t1;
+	}
+
 	float3 localize(float3 p) {
 		return mul(unity_WorldToObject, float4(p, 1)).xyz;
 	}
 
 	float3 get_uv(float3 p) {
-		float3 local = localize(p);
-		return (local + 0.5);
+		// float3 local = localize(p);
+		return (p + 0.5);
 	}
 
 	float sample_volume(float3 uv) {
@@ -78,22 +102,44 @@
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#define COUNT 64
+			#define COUNT 100
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float3 ro = i.world;
-				float3 rd = normalize(i.world - _WorldSpaceCameraPos);
+				Ray ray;
+				ray.origin = localize(i.world);
 
-				float t = 0.01;
-				float dt = 0.001;
+				// world space direction to object space
+				float3 dir = normalize(i.world - _WorldSpaceCameraPos);
+				ray.dir = normalize(mul((float3x3)unity_WorldToObject, dir));
+
+				AABB aabb;
+				aabb.min = float3(-0.5, -0.5, -0.5);
+				aabb.max = float3( 0.5,  0.5,  0.5);
+
+				float tnear;
+				float tfar;
+				intersect(ray, aabb, tnear, tfar);
+
+				tnear = max(0.0, tnear);
+
+				// float3 start = ray.origin + ray.dir * tnear;
+				float3 start = ray.origin;
+				float3 end = ray.origin + ray.dir * tfar;
+				// float dist = distance(start, end);
+				float dist = abs(tfar - tnear);
+				float step_size = dist / float(COUNT);
+				float3 ds = normalize(end - start) * step_size;
+
+				float t = 0.0;
 				float4 dst = float4(0, 0, 0, 0);
 
-				float3 uv = get_uv(ro);
+				float3 uv = get_uv(ray.origin);
+				float3 p = ray.origin;
 
-				[loop]
-				while (!outside(uv) && dst.r <= _Threshold) {
-					uv = get_uv(ro);
+				[unroll]
+				for (int iter = 0; iter < COUNT; iter++) {
+					uv = get_uv(p);
 					float v = sample_volume(uv);
 					float4 src = float4(v, v, v, v);
 					src.a *= 0.5;
@@ -101,12 +147,12 @@
 
 					// blend
 					dst = (1.0 - dst.a) * src + dst;
-					// dt = t * 0.01;
-					t += dt;
-					ro += rd * t;
-				}
+					p += ds;
 
-				dst.a *= dst.r;
+					if (dst.a > _Threshold) {
+						break;
+					}
+				}
 
 				return saturate(dst) * _Color;
 			}

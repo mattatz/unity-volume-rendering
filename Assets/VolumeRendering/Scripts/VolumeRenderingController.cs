@@ -38,6 +38,16 @@ namespace VolumeRendering
             });
         }
 
+        public void OnIntensity(float v)
+        {
+            volume.intensity = v;
+        }
+
+        public void OnThreshold(float v)
+        {
+            volume.threshold = v;
+        }
+
     }
 
 }
