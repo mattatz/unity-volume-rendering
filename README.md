@@ -5,14 +5,14 @@ Volume rendering by object space raymarching for Unity.
 
 <img src="https://raw.githubusercontent.com/mattatz/unity-volume-rendering/master/Captures/Demo.gif">
 
-VolumeRendering.shader cut volume each axes by _SliceMin, _SliceMax properties.
+VolumeRendering.shader cut a volume each axes by _SliceMin, _SliceMax properties.
 
 ## Object space raymarching
 
 <img src="https://raw.githubusercontent.com/mattatz/unity-volume-rendering/master/Captures/Geometry.png">
 
-VolumeRendering component generates Cube geometry which has 1.0 length edges.
-By object space raymarching techniques, rendering a volume with MeshRenderer. (See references)
+VolumeRendering component generates a Cube geometry which has 1.0 length edges.
+By object space raymarching techniques, rendering a volume with a MeshRenderer. (See references)
 
 ## VolumeAssetBuilder
 
