@@ -14,11 +14,22 @@ VolumeRendering.shader cut a volume each axes by _SliceMin, _SliceMax properties
 VolumeRendering component generates a Cube geometry which has 1.0 length edges.
 By object space raymarching techniques, rendering a volume with a MeshRenderer. (See references)
 
+## Slice axes rotation
+
+<img src="https://raw.githubusercontent.com/mattatz/unity-volume-rendering/master/Captures/Axis.gif">
+
+By setting an axis quaternion in VolumeRendering component, 
+you can cut a volume from arbitrary angles.
+
 ## VolumeAssetBuilder
 
 <img src="https://raw.githubusercontent.com/mattatz/unity-volume-rendering/master/Captures/VolumeAssetBuilder.png">
 
 VolumeAssetBuilder builds a 3D texture asset from a pvm raw file. (volume raw data)
+
+## Compatibility
+
+tested on Unity 2017.3.1, windows10 (GTX 1060).
 
 ## Sources
 

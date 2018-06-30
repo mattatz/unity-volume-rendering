@@ -11,6 +11,7 @@ namespace VolumeRendering
 
         [SerializeField] protected VolumeRendering volume;
         [SerializeField] protected Slider sliderXMin, sliderXMax, sliderYMin, sliderYMax, sliderZMin, sliderZMax;
+        [SerializeField] protected Transform axis;
 
         void Start ()
         {
@@ -36,6 +37,11 @@ namespace VolumeRendering
             sliderZMax.onValueChanged.AddListener((v) => {
                 volume.sliceZMax = sliderZMax.value = Mathf.Max(v, volume.sliceZMin + threshold);
             });
+        }
+
+        void Update()
+        {
+            volume.axis = axis.rotation;
         }
 
         public void OnIntensity(float v)
