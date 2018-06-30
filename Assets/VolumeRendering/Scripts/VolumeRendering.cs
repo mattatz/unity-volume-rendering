@@ -25,16 +25,16 @@ namespace VolumeRendering
         [Range(0f, 1f)] public float sliceZMin = 0.0f, sliceZMax = 1.0f;
         public Quaternion axis = Quaternion.identity;
 
-        [SerializeField] protected Texture3D volume;
+        public Texture volume;
 
         protected void Start () {
             material = new Material(shader);
             GetComponent<MeshFilter>().sharedMesh = Build();
             GetComponent<MeshRenderer>().sharedMaterial = material;
-            material.SetTexture("_Volume", volume);
         }
         
         protected void Update () {
+            material.SetTexture("_Volume", volume);
             material.SetColor("_Color", color);
             material.SetFloat("_Threshold", threshold);
             material.SetFloat("_Intensity", intensity);
