@@ -80,6 +80,7 @@ struct v2f
   float4 vertex : SV_POSITION;
   float2 uv : TEXCOORD0;
   float3 world : TEXCOORD1;
+  float3 local : TEXCOORD2;
 };
 
 v2f vert(appdata v)
@@ -88,17 +89,19 @@ v2f vert(appdata v)
   o.vertex = UnityObjectToClipPos(v.vertex);
   o.uv = v.uv;
   o.world = mul(unity_ObjectToWorld, v.vertex).xyz;
+  o.local = v.vertex.xyz;
   return o;
 }
 
 fixed4 frag(v2f i) : SV_Target
 {
   Ray ray;
-  ray.origin = localize(i.world);
+  // ray.origin = localize(i.world);
+  ray.origin = i.local;
 
   // world space direction to object space
-  float3 dir = normalize(i.world - _WorldSpaceCameraPos);
-  ray.dir = normalize(mul((float3x3) unity_WorldToObject, dir));
+  float3 dir = (i.world - _WorldSpaceCameraPos);
+  ray.dir = normalize(mul(unity_WorldToObject, dir));
 
   AABB aabb;
   aabb.min = float3(-0.5, -0.5, -0.5);
@@ -133,10 +136,7 @@ fixed4 frag(v2f i) : SV_Target
     dst = (1.0 - dst.a) * src + dst;
     p += ds;
 
-    if (dst.a > _Threshold)
-    {
-      break;
-    }
+    if (dst.a > _Threshold) break;
   }
 
   return saturate(dst) * _Color;

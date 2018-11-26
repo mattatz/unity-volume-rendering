@@ -23,13 +23,15 @@ you can cut a volume from arbitrary angles.
 
 ## VolumeAssetBuilder
 
+Menu : Window -> VolumeAssetBuilder
+
 <img src="https://raw.githubusercontent.com/mattatz/unity-volume-rendering/master/Captures/VolumeAssetBuilder.png">
 
 VolumeAssetBuilder builds a 3D texture asset from a pvm raw file. (volume raw data)
 
 ## Compatibility
 
-tested on Unity 2017.3.1, windows10 (GTX 1060).
+tested on Unity 2017.2.8f1, windows10 (GTX 1060).
 
 ## Sources
 

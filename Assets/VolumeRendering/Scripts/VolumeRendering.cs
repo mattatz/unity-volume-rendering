@@ -19,7 +19,7 @@ namespace VolumeRendering
 
         [SerializeField] Color color = Color.white;
         [Range(0f, 1f)] public float threshold = 0.5f;
-        [Range(1f, 5f)] public float intensity = 1.5f;
+        [Range(0.5f, 5f)] public float intensity = 1.5f;
         [Range(0f, 1f)] public float sliceXMin = 0.0f, sliceXMax = 1.0f;
         [Range(0f, 1f)] public float sliceYMin = 0.0f, sliceYMax = 1.0f;
         [Range(0f, 1f)] public float sliceZMin = 0.0f, sliceZMax = 1.0f;
@@ -27,7 +27,7 @@ namespace VolumeRendering
 
         public Texture volume;
 
-        protected void Start () {
+        protected virtual void Start () {
             material = new Material(shader);
             GetComponent<MeshFilter>().sharedMesh = Build();
             GetComponent<MeshRenderer>().sharedMaterial = material;
@@ -74,6 +74,7 @@ namespace VolumeRendering
             mesh.vertices = vertices;
             mesh.triangles = triangles;
             mesh.RecalculateNormals();
+            mesh.hideFlags = HideFlags.HideAndDontSave;
             return mesh;
         }
 
